@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Médico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-100 font-sans leading-normal tracking-normal">
+
+    <div class="container mx-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-slate-800">
+                <i class="fa-solid fa-user-doctor text-blue-600 mr-2"></i>Gestão de Pacientes
+            </h1>
+            <a href="/novo-paciente"
+                class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded shadow transition duration-300">
+                <i class="fa-solid fa-plus mr-1"></i> Novo Paciente
+            </a>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            ID</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Nome</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            CPF</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Telefone</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Nascimento</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Endereço</th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-blue-600 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                            Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${pacientes}" class="hover:bg-gray-50">
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm font-bold text-gray-700"
+                            th:text="${p.id}"></td>
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm text-gray-900" 
+                            th:text="${p.nome}"></td>
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                            <span class="relative inline-block px-3 py-1 font-semibold text-blue-900 leading-tight">
+                                <span aria-hidden class="absolute inset-0 bg-blue-200 opacity-50 rounded-full"></span>
+                                <span class="relative" th:text="${p.cpf}"></span>
+                            </span>
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm text-gray-600"
+                            th:text="${p.telefone}"></td>
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm text-gray-600"
+                            th:text="${#temporals.format(p.dataNascimento, 'dd/MM/yyyy')}"></td>
+                        
+                        <!-- Endereço formatado -->
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm text-gray-600">
+                            <div th:if="${p.endereco != null}">
+                                <span th:text="${p.endereco.logradouro + ', ' + p.endereco.numero}"></span>
+                                <span th:if="${p.endereco.complemento != null and !p.endereco.complemento.isEmpty()}" 
+                                      th:text="${' - ' + p.endereco.complemento}"></span>
+                                <br>
+                                <span class="text-gray-500 text-xs" 
+                                      th:text="${p.endereco.bairro + ' - ' + p.endereco.cidade + '/' + p.endereco.uf}"></span>
+                                <br>
+                                <span class="text-gray-400 text-xs" th:text="${'CEP: ' + p.endereco.cep}"></span>
+                            </div>
+                            <span th:if="${p.endereco == null}" class="text-gray-400 italic">Não informado</span>
+                        </td>
+
+                        <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                            <a th:href="@{/editar-paciente(id=${p.id})}"
+                                class="text-amber-500 hover:text-amber-700 mr-3 transition" title="Editar">
+                                <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                            </a>
+                            <a th:href="@{/deletar-paciente(id=${p.id})}" class="text-red-500 hover:text-red-700 transition"
+                                onclick="return confirm('Tem certeza que deseja remover este paciente?');"
+                                title="Excluir">
+                                <i class="fa-solid fa-trash-can fa-lg"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${pacientes.empty}">
+                        <td colspan="7" class="px-5 py-10 text-center text-gray-500">
+                            <i class="fa-regular fa-folder-open text-4xl mb-3 block"></i>
+                            Nenhum paciente encontrado. Cadastre o primeiro!
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
